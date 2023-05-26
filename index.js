@@ -4,6 +4,7 @@ import http from 'http';
 import path from 'path';
 import url from 'url';
 import { fileURLToPath } from 'url';
+import slugify from 'slugify';
 import replaceTemplate from './replaceTemplate.js'
 
 const __filename = fileURLToPath(import.meta.url);
@@ -49,6 +50,9 @@ const replaceTemplate = (template, product) => {
 };
 */
 
+const slugs = dataObj.map((prd) => slugify(prd.productName, { lower: true }));
+console.log(slugs);
+
 // http://127.0.0.1:8000/
 const setServer = () => {
   const server = http.createServer((req, res) => {
@@ -81,8 +85,9 @@ const setServer = () => {
         res.writeHead(200, {
           'Content-type': 'text/html',
         });
-        const productData = dataObj[query.id];
+        // const productData = dataObj[query.id];
         // const productData = dataObj.find((prd) => prd.id.toString() === query.id);
+        const productData = dataObj.find((prd) => slugify(prd.productName, {lower: true}) === query.id);
         const productHtml = replaceTemplate(productTemp, productData);
         // console.log('FOUND', productData);
         res.end(productHtml);
